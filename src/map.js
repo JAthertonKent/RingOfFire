@@ -4,7 +4,7 @@ var MAP_TYPE = google.maps.MapTypeId.SATELLITE;
 
 function renderMap() {
   var map = getBlankMap(document.getElementById('map-canvas'));
-  populate(map);
+  populateHeatmap(map);
 }
 
 function getBlankMap(element) {
@@ -19,6 +19,27 @@ function getBlankMap(element) {
 function populate(map) {
   var options = 'https://soda.demo.socrata.com/resource/earthquakes.json';
   $.get(options, function(response) { createMarkers(map, response); });
+}
+
+function populateHeatmap(map) {
+  var options = 'https://soda.demo.socrata.com/resource/earthquakes.json';
+  $.get(options, function(response) {
+    var heatmapData = extractPositions(response);
+    var heatmap = new google.maps.visualization.HeatmapLayer({
+        data: heatmapData
+    });
+    heatmap.setMap(map);
+  });
+}
+
+function extractPositions(earthquakeList) {
+  var earthquake;
+  var positionsList = [];
+  for (var i = 0; i < earthquakeList.length; i++) {
+    earthquake = earthquakeList[i];
+    positionsList.push(new google.maps.LatLng(earthquake['location']['latitude'], earthquake['location']['longitude']));
+  }
+  return positionsList;
 }
 
 function createMarkers(map, earthquakeList) {
