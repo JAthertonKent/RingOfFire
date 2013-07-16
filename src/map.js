@@ -1,10 +1,26 @@
 var USA_CENTER = new google.maps.LatLng(40, -99);
 var ZOOM = 4;
 var MAP_TYPE = google.maps.MapTypeId.SATELLITE;
+var mapView;
+
+function renderHeatmap() {
+  var map = getBlankMap(document.getElementById('map-canvas'));
+  mapView = true;
+  populateHeatmap(map);
+}
 
 function renderMap() {
   var map = getBlankMap(document.getElementById('map-canvas'));
-  populateHeatmap(map);
+  mapView = false;
+  populate(map);
+}
+
+function toggleMap() {
+  if (mapView) {
+    renderMap();
+  } else {
+    renderHeatmap();
+  }
 }
 
 function getBlankMap(element) {
@@ -28,7 +44,7 @@ function populateHeatmap(map) {
     var heatmap = new google.maps.visualization.HeatmapLayer({
         data: heatmapData,
         dissipating: true,
-        radius: 20
+        radius: 30
     });
     heatmap.setMap(map);
   });
@@ -62,4 +78,5 @@ function createMarker(map, earthquake) {
 
 $(document).ready(function() {
   google.maps.event.addDomListener(window, 'load', renderMap);
+  $("#the_button").click(toggleMap);
 });
