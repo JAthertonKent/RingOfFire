@@ -1,26 +1,30 @@
+var USA_CENTER = new google.maps.LatLng(40, -99);
+var ZOOM = 4;
+var MAP_TYPE = google.maps.MapTypeId.ROADMAP;
+
 function renderMap() {
   var map = getBlankMap();
   populate(map);
 }
 
 function getBlankMap() {
-  var usa = {'latitude': 40, 'logitude': -99};
   var mapOptions = {
-    zoom: 4,
-    center: new google.maps.LatLng(usa['latitude'], usa['logitude']),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    zoom: ZOOM,
+    center: USA_CENTER,
+    mapTypeId: MAP_TYPE
   };
   return new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 }
 
 function populate(map) {
   var options = 'https://soda.demo.socrata.com/resource/earthquakes.json';
+  $.get(options, function(response) { createMarkers(map, response); });
+}
 
-  $.get(options, function(response) {
-    for (var i = 0; i < response.length; i++) {
-      createMarker(map, response[i]);
-    }
-  });
+function createMarkers(map, earthquakeList) {
+  for (var i = 0; i < earthquakeList.length; i++) {
+    createMarker(map, earthquakeList[i]);
+  }
 }
 
 function createMarker(map, earthquake) {
