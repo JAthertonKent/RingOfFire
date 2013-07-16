@@ -3,17 +3,17 @@ var ZOOM = 4;
 var MAP_TYPE = google.maps.MapTypeId.ROADMAP;
 
 function renderMap() {
-  var map = getBlankMap();
+  var map = getBlankMap(document.getElementById('map-canvas'));
   populate(map);
 }
 
-function getBlankMap() {
+function getBlankMap(element) {
   var mapOptions = {
     zoom: ZOOM,
     center: USA_CENTER,
     mapTypeId: MAP_TYPE
   };
-  return new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  return new google.maps.Map(element, mapOptions);
 }
 
 function populate(map) {
