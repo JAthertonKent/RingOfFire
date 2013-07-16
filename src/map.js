@@ -1,26 +1,12 @@
 var USA_CENTER = new google.maps.LatLng(40, -99);
 var ZOOM = 4;
 var MAP_TYPE = google.maps.MapTypeId.SATELLITE;
-var mapView;
-
-function renderHeatmap() {
-  var map = getBlankMap(document.getElementById('map-canvas'));
-  mapView = true;
-  populateHeatmap(map);
-}
+var markers = [];
+var heatmap;
 
 function renderMap() {
   var map = getBlankMap(document.getElementById('map-canvas'));
-  mapView = false;
   populate(map);
-}
-
-function toggleMap() {
-  if (mapView) {
-    renderMap();
-  } else {
-    renderHeatmap();
-  }
 }
 
 function getBlankMap(element) {
@@ -34,14 +20,11 @@ function getBlankMap(element) {
 
 function populate(map) {
   var options = 'https://soda.demo.socrata.com/resource/earthquakes.json';
-  $.get(options, function(response) { createMarkers(map, response); });
-}
-
-function populateHeatmap(map) {
-  var options = 'https://soda.demo.socrata.com/resource/earthquakes.json';
   $.get(options, function(response) {
+    createMarkers(map, response);
+
     var heatmapData = extractPositions(response);
-    var heatmap = new google.maps.visualization.HeatmapLayer({
+    heatmap = new google.maps.visualization.HeatmapLayer({
         data: heatmapData,
         dissipating: true,
         radius: 30
@@ -63,8 +46,10 @@ function extractPositions(earthquakeList) {
 }
 
 function createMarkers(map, earthquakeList) {
+  var marker;
   for (var i = 0; i < earthquakeList.length; i++) {
-    createMarker(map, earthquakeList[i]);
+    marker = createMarker(map, earthquakeList[i]);
+    markers.push(marker);
   }
 }
 
@@ -72,8 +57,23 @@ function createMarker(map, earthquake) {
   var location = earthquake['location'];
   return new google.maps.Marker({
     position: new google.maps.LatLng(location['latitude'], location['longitude']),
-    map: map
+    map: map,
+    visible: false
   });
+}
+
+function toggleMap() {
+  if (heatmap.get('opacity') == 0) {
+    heatmap.setOptions({opacity: 1});
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setVisible(false);
+    }
+  } else {
+    heatmap.setOptions({opacity: 0});
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setVisible(true);
+    }
+  }
 }
 
 $(document).ready(function() {
