@@ -1,6 +1,6 @@
 var USA_CENTER = new google.maps.LatLng(40, -99);
 var ZOOM = 4;
-var MAP_TYPE = google.maps.MapTypeId.ROADMAP;
+var MAP_TYPE = google.maps.MapTypeId.SATELLITE;
 
 function renderMap() {
   var map = getBlankMap(document.getElementById('map-canvas'));
