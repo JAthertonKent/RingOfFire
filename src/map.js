@@ -26,7 +26,9 @@ function populateHeatmap(map) {
   $.get(options, function(response) {
     var heatmapData = extractPositions(response);
     var heatmap = new google.maps.visualization.HeatmapLayer({
-        data: heatmapData
+        data: heatmapData,
+        dissipating: true,
+        radius: 20
     });
     heatmap.setMap(map);
   });
@@ -37,7 +39,9 @@ function extractPositions(earthquakeList) {
   var positionsList = [];
   for (var i = 0; i < earthquakeList.length; i++) {
     earthquake = earthquakeList[i];
-    positionsList.push(new google.maps.LatLng(earthquake['location']['latitude'], earthquake['location']['longitude']));
+    positionsList.push(
+        new google.maps.LatLng(earthquake['location']['latitude'], earthquake['location']['longitude'])
+      );
   }
   return positionsList;
 }
